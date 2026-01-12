@@ -144,7 +144,9 @@ kubectl get pods -A
 STATUS: Ready
 ```
 
+
 ## 3. Install Argo CD
+Step:
 ### 3.1. Create Namespace ArgoCD
 ```
 kubectl create namespace argocd
