@@ -146,7 +146,7 @@ STATUS: Ready
 
 
 ## 3. Install Argo CD
-Step:
+Steps:
 ### 3.1. Create Namespace ArgoCD
 ```
 kubectl create namespace argocd
