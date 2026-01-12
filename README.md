@@ -143,3 +143,97 @@ kubectl get pods -A
 ```
 STATUS: Ready
 ```
+
+## 3. Install Argo CD
+### 3.1. Create Namespace ArgoCD
+```
+kubectl create namespace argocd
+```
+
+### 3.2. Install ArgoCD Official Manifest
+👉 Use the stable version (The standard version used by companies)
+
+```
+kubectl apply -n argocd \
+  -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+```
+
+⏳ Wait 1-2 minutes
+
+### 3.3. Check Pod
+```
+kubectl get pods -n argocd
+```
+
+✅ If OK:
+```
+argocd-server-xxxx        1/1 Running
+argocd-repo-server-xxxx   1/1 Running
+argocd-application-controller-0 1/1 Running
+argocd-redis-xxxx         1/1 Running
+```
+
+### 3.4. Expose ArgoCD UI
+Edit service:
+```
+kubectl edit svc argocd-server -n argocd
+```
+
+Change:
+```
+type: ClusterIP
+```
+
+➡️ Result:
+```
+type: NodePort
+```
+
+Save.
+
+Check Port:
+```
+kubectl get svc -n argocd argocd-server
+```
+
+Example:
+```
+argocd-server   NodePort   10.104.207.114   <none>        80:30224/TCP,443:32709/TCP   50m
+```
+
+👉 UI:
+```
+https://<IP-SERVER>:32709
+```
+
+### 3.5. Get Login Password
+Get password:
+```
+kubectl get secret argocd-initial-admin-secret \
+  -n argocd \
+  -o jsonpath="{.data.password}" | base64 -d
+```
+
+Default User:
+```
+admin
+```
+
+📌 Login success → Change password
+
+### 3.6. Install ArgoCD CLI
+```
+curl -sSL -o argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
+chmod +x argocd
+sudo mv argocd /usr/local/bin/
+```
+
+Login:
+```
+argocd login <IP-SERVER>:<PORT> --username admin --password <PASSWORD> --insecure
+```
+
+### 3.7. Change password
+```
+argocd account update-password --account admin --current-password <PASSWORD> --new-password <NEW_PASSWORD>
+```
