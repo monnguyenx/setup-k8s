@@ -38,3 +38,29 @@ EOF
 
 sudo sysctl --system
 ```
+
+### 2.2. Install Containerd
+```
+sudo apt update
+sudo apt install -y containerd
+```
+
+1. Create standard configuration for K8s
+```
+sudo mkdir -p /etc/containerd
+containerd config default | sudo tee /etc/containerd/config.toml
+```
+
+Edit line:
+```
+SystemdCgroup = true
+```
+```
+sudo sed -i 's/SystemdCgroup = false/SystemdCgroup = true/' /etc/containerd/config.toml
+```
+
+Restart:
+```
+sudo systemctl restart containerd
+sudo systemctl enable containerd
+```
