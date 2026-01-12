@@ -16,6 +16,7 @@ This repository documents step-by-step how to:
 
 ## 2. Install Kubernetes
 Steps:
+### 2.1. Prepare the system
 1. Disables swap ()
 ```
 sudo swapoff -a
