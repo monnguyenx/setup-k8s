@@ -94,7 +94,7 @@ sudo kubeadm init \
   --pod-network-cidr=10.244.0.0/16
 ```
 
-Wait 1-2 minutes, and eventually will see the join token message --> 
+Wait 1-2 minutes, and eventually will see the join token message → 
     If you want another node to join, add this token to that node.
 
 ### 2.5. Setup Kubect for User
@@ -121,6 +121,25 @@ kubectl get pods -n kube-system -w
 ```
 
 When:
-- flannel --> Running
-- coredns --> Running
+- flannel → Running
+- coredns → Running
+
 ➡️ DONE
+
+### 2.7. Allow Pod running in Control-plane
+If have 1-node K8s (Control-plane + worker), you must allow pod running in Control-plane
+
+```
+kubectl taint nodes --all node-role.kubernetes.io/control-plane-
+```
+
+### 2.8. Final Check
+```
+kubectl get nodes
+kubectl get pods -A
+```
+
+### 2.9. Desired results
+```
+STATUS: Ready
+```
