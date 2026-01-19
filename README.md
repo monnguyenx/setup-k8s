@@ -253,7 +253,9 @@ curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 ```
 
 Check:
-```helm version```
+```
+helm version
+```
 
 ## 5. Install Cluster Infrastructure (Helm-based)
 
@@ -428,7 +430,7 @@ kubectl get ingress -n portainer
 - replicaCount
 - resources
 
-### 5.4. Rancher
+### 5.5. Rancher
 #### Step 1. Pull repo rancher in GitLab
 
 #### Step 2. Run Command
@@ -490,3 +492,10 @@ kubectl get secret --namespace cattle-system bootstrap-secret -o jsonpath='{.dat
 - service
 - replicas
 - priorityClassName
+
+## 5. Config repository
+## 6. Config terraform
+## 7. Config Jenkins job
+## 8. ArgoCD
+## 9. Platform services
+## 10. Application services
