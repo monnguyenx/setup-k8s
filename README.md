@@ -258,3 +258,35 @@ capabilities that most production workloads depend on.
   - ``` kubectl top ```
   - Horizontal Pod Autoscaler (HPA)
 - If not present → HPA does not function
+
+### Longhorn
+- Distributed block storage cho Kubernetes
+- Provide PersistentVolume (PVC)
+- Required for:
+  - Database
+  - StatefulSet
+- If not present → PVC stuck in pending
+
+### NGINX Ingress Controller
+- HTTP/HTTPS ingress for cluster
+- Route traffic from outside to the Service
+- Required for:
+  - Web UI
+  - API Gateway
+- If not present → Ingress does not work
+
+### Portainer (Optional)
+- Web UI manages Kubernetes
+- Suitable for:
+  - Lab
+  - Demo
+  - Debug quickly
+
+### Rancher (Optional/ Advanced)
+- Kubernetes management platform
+- Management:
+  - Users/RBAC
+  - Multiple clusters
+- Often used in enterprises
+
+→ The next step will be installation instructions
