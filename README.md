@@ -239,12 +239,27 @@ argocd login <IP-SERVER>:<PORT> --username admin --password <PASSWORD> --insecur
 argocd account update-password --account admin --current-password <PASSWORD> --new-password <NEW_PASSWORD>
 ```
 
+## 4. Install Helm
+- Helm is a package manager for Kubernetes that enables reusable
+and configurable application deployments.
 
-## 4. Install Cluster Infrastructure (Helm-based)
+- Helm charts allow defining Kubernetes manifests once and reusing them
+across multiple environments by providing different configuration values.
+
+Install Helm:
+
+```
+curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+```
+
+Check:
+```helm version```
+
+## 5. Install Cluster Infrastructure (Helm-based)
 
 Install foundation components for the cluster before deploying the app
 
-### 4.1. Infrastructure Components Overview
+### 5.1. Infrastructure Components Overview
 
 Before deploying applications with Argo CD, the Kubernetes cluster must have
 basic infrastructure components installed.
@@ -259,7 +274,7 @@ capabilities that most production workloads depend on.
   - Horizontal Pod Autoscaler (HPA)
 - If not present → HPA does not function
 
-### Longhorn
+#### Longhorn
 - Distributed block storage cho Kubernetes
 - Provide PersistentVolume (PVC)
 - Required for:
@@ -267,7 +282,7 @@ capabilities that most production workloads depend on.
   - StatefulSet
 - If not present → PVC stuck in pending
 
-### NGINX Ingress Controller
+#### NGINX Ingress Controller
 - HTTP/HTTPS ingress for cluster
 - Route traffic from outside to the Service
 - Required for:
@@ -275,18 +290,203 @@ capabilities that most production workloads depend on.
   - API Gateway
 - If not present → Ingress does not work
 
-### Portainer (Optional)
+#### Portainer (Optional)
 - Web UI manages Kubernetes
 - Suitable for:
   - Lab
   - Demo
   - Debug quickly
 
-### Rancher (Optional/ Advanced)
+#### Rancher (Optional/ Advanced)
 - Kubernetes management platform
 - Management:
   - Users/RBAC
   - Multiple clusters
 - Often used in enterprises
 
-→ The next step will be installation instructions
+#### → The next step will be installation instructions
+### 5.2. Install Metrics Server
+#### Step 1. Pull repo metric-server in GitLab
+
+#### Step 2. Run command:
+```
+helm install metrics-server ./helm/metrics-server \
+  --namespace kube-system \
+  --create-namespace
+```
+
+#### Note: Important settings in values.yaml
+- apiService.create: true → Metrics are provided to the API
+- rbac.create: true → Full Permissions
+- serviceAccount.create: true → ServiceAccount is created
+- replicas: 1 → Deploy 1 pod
+
+### 5.2. Install Longhorn
+#### Step 1. Pull repo longhorn in GitLab
+
+#### Step 2. Run CCommand
+```
+helm install longhorn ./helm/longhorn \
+  --namespace longhorn-system \
+  --create-namespace
+```
+
+#### Step 3. Check Install
+Check pod:
+```
+kubectl get pods -n longhorn-system
+```
+
+Check StorageClass:
+```
+kubectl get storageclass
+```
+
+Access Longhorn UI (dashboard):
+```
+kubectl port-forward -n longhorn-system svc/longhorn-frontend 8080:80
+```
+
+#### Note: Important settings in values.yaml
+- defaultSettings.defaultDataPath: ~ → Specify the data storage directory on node (default: /var/lib/longhorn/)
+- persistence.defaultClassReplicaCount=2 → Number of Longhorn data volume copies on different nodes
+- defaultSettings.storageMinimalAvailablePercentage=25 → Minimum free space threshold on each node storing Longhorn data
+- persistence.defaultFsType=ext4 → Filesystem is used when Longhorn first formats a volume
+- ingress → Create an Ingress object for NGINX controller to route traffic from host via path "/" to Longhorn UI pod, with basic authentication protection
+
+### 5.3. NGINX Ingress Controller
+#### Step 1. Pull repo nginx-ingress-controller in GitLab
+
+#### Step 2. Run Command
+```
+helm install nginx-ingress-controller ./helm/nginx-ingress-controller \
+  --namespace ingress-nginx \
+  --create-namespace
+```
+
+#### Step 3. Check Install
+Pod Running:
+```
+kubectl get pods -n ingress-nginx
+```
+
+IP Service:
+```
+kubectl get svc -n ingress-nginx
+```
+
+Ingress is working:
+```
+kubectl get ingress -n longhorn-system
+```
+
+#### Note: Important settings in values.yaml
+On premise:
+- kind: DaemonSet
+- useHostPort: false 
+- service.type: NodePort
+- ingressClassResource.default: true
+- replicaCount: 2
+
+Cloud:
+- kind: Deployment
+- replicaCount=3
+- service.type=LoadBalancer
+
+### 5.4. Portainer
+#### Step 1. Pull repo portainer in GitLab
+
+#### Step 2. Run Command
+```
+helm install portainer ./helm/portainer \
+  --namespace portainer \
+  --create-namespace
+```
+
+#### Step 3. Check Install
+Pod Running:
+```
+kubectl get pods -n portainer
+```
+
+IP Service:
+```
+kubectl get svc -n portainer
+```
+
+Ingress is working:
+```
+kubectl get ingress -n portainer
+```
+
+#### Note: Important settings in values.yaml
+- type: NodePort
+- ingress.enabled: true
+- ingress.ingressClassName: nginx
+- ingress.hosts[0].host: portainer.vti-solutions.vn
+- persistence
+- replicaCount
+- resources
+
+### 5.4. Rancher
+#### Step 1. Pull repo rancher in GitLab
+
+#### Step 2. Run Command
+```
+helm install rancher ./helm/rancher \
+  --namespace cattle-system \
+  --create-namespace
+```
+
+#### Step 3. Check Cert-manager
+```
+kubectl get ns | grep cert-manager
+kubectl get crd | grep cert
+```
+
+If is not, install cert-manager:
+```
+helm repo add jetstack https://charts.jetstack.io
+helm install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace
+```
+
+#### Step 4. Check Install
+Pod Running:
+```
+kubectl get pods -n cattle-system
+```
+
+IP Service:
+```
+kubectl get svc -n cattle-system rancher
+```
+
+Ingress is working:
+```
+kubectl get ingress -n cattle-system
+```
+
+Check certificate:
+```
+kubectl get cert -n cattle-system
+```
+
+#### Step 5. Rancher Web
+Get Rancher URL:
+```
+kubectl get svc -n cattle-system
+```
+
+Get password:
+```
+kubectl get secret --namespace cattle-system bootstrap-secret -o jsonpath='{.data.bootstrapPassword}' | base64 -d
+```
+
+#### Note: Important settings in values.yaml
+- hostname
+- ingress
+- ingress.tls.source
+- ingress.tls.secretName
+- service
+- replicas
+- priorityClassName
