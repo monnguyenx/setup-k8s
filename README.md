@@ -238,3 +238,23 @@ argocd login <IP-SERVER>:<PORT> --username admin --password <PASSWORD> --insecur
 ```
 argocd account update-password --account admin --current-password <PASSWORD> --new-password <NEW_PASSWORD>
 ```
+
+
+## 4. Install Cluster Infrastructure (Helm-based)
+
+Install foundation components for the cluster before deploying the app
+
+### 4.1. Infrastructure Components Overview
+
+Before deploying applications with Argo CD, the Kubernetes cluster must have
+basic infrastructure components installed.
+
+These components provide storage, networking, monitoring, and management
+capabilities that most production workloads depend on.
+
+#### Metrics Server
+- Collect CPU / Memory usage from kubelet
+- Required for:
+  - ``` kubectl top ```
+  - Horizontal Pod Autoscaler (HPA)
+- If not present → HPA does not function
