@@ -495,13 +495,142 @@ kubectl get secret --namespace cattle-system bootstrap-secret -o jsonpath='{.dat
 
 ## 5. Config repository
 ### 5.1. Tạo repo CICD Configs
-|_argo_cd
-|
-|_bootstrap
-|
-|_databases
-|
-|_manifests
+```text
+.
+├── argo-cd
+│   ├── bootstrap.yaml
+│   └── project.yaml
+├── bootstrap
+│   ├── Chart.yaml
+│   ├── templates
+│   │   ├── services
+│   │   │   ├── attribute-service.yaml
+│   │   │   ├── auth-service.yaml
+│   │   │   ├── cost-center-service.yaml
+│   │   │   ├── datasync-service.yaml
+│   │   │   ├── item-service.yaml
+│   │   │   ├── item-stock-service.yaml
+│   │   │   ├── master-data-service.yaml
+│   │   │   ├── mesx-grand.yaml
+│   │   │   ├── request-service.yaml
+│   │   │   ├── sale-service.yaml
+│   │   │   ├── ticket-service.yaml
+│   │   │   ├── user-service.yaml
+│   │   │   ├── warehouse-layout-service.yaml
+│   │   │   └── warehouse-service.yaml
+│   │   └── tools
+│   │       ├── kafka.yaml
+│   │       ├── kong.yaml
+│   │       ├── nats.yaml
+│   │       └── redis.yaml
+│   └── values.yaml
+├── databases
+├── manifests
+│   ├── services
+│   │   ├── attribute-service
+│   │   │   ├── config.yaml
+│   │   │   ├── deployment.yaml
+│   │   │   ├── secret.yaml
+│   │   │   └── service.yaml
+│   │   ├── auth-service
+│   │   │   ├── config.yaml
+│   │   │   ├── deployment.yaml
+│   │   │   ├── secret.yaml
+│   │   │   └── service.yaml
+│   │   ├── cost-center-service
+│   │   │   ├── config.yaml
+│   │   │   ├── deployment.yaml
+│   │   │   ├── secret.yaml
+│   │   │   └── service.yaml
+│   │   ├── datasync-service
+│   │   │   ├── config.yaml
+│   │   │   ├── deployment.yaml
+│   │   │   ├── secret.yaml
+│   │   │   └── service.yaml
+│   │   ├── item-service
+│   │   │   ├── config.yaml
+│   │   │   ├── deployment.yaml
+│   │   │   ├── secret.yaml
+│   │   │   └── service.yaml
+│   │   ├── item-stock-service
+│   │   │   ├── config.yaml
+│   │   │   ├── deployment.yaml
+│   │   │   ├── secret.yaml
+│   │   │   └── service.yaml
+│   │   ├── master-data-service
+│   │   │   ├── config.yaml
+│   │   │   ├── deployment.yaml
+│   │   │   ├── secret.yaml
+│   │   │   └── service.yaml
+│   │   ├── mesx-grand
+│   │   │   ├── config.yaml
+│   │   │   ├── deployment.yaml
+│   │   │   ├── ingress.yaml
+│   │   │   └── service.yaml
+│   │   ├── request-service
+│   │   │   ├── config.yaml
+│   │   │   ├── deployment.yaml
+│   │   │   ├── secret.yaml
+│   │   │   └── service.yaml
+│   │   ├── sale-service
+│   │   │   ├── config.yaml
+│   │   │   ├── deployment.yaml
+│   │   │   ├── secret.yaml
+│   │   │   └── service.yaml
+│   │   ├── ticket-service
+│   │   │   ├── config.yaml
+│   │   │   ├── deployment.yaml
+│   │   │   ├── secret.yaml
+│   │   │   └── service.yaml
+│   │   ├── user-service
+│   │   │   ├── config.yaml
+│   │   │   ├── deployment.yaml
+│   │   │   ├── secret.yaml
+│   │   │   └── service.yaml
+│   │   ├── warehouse-layout-service
+│   │   │   ├── config.yaml
+│   │   │   ├── deployment.yaml
+│   │   │   ├── secret.yaml
+│   │   │   └── service.yaml
+│   │   └── warehouse-service
+│   │       ├── config.yaml
+│   │       ├── deployment.yaml
+│   │       ├── secret.yaml
+│   │       └── service.yaml
+│   └── tools
+│       ├── kafka
+│       │   ├── Chart.lock
+│       │   ├── charts
+│       │   ├── Chart.yaml
+│       │   ├── README.md
+│       │   ├── templates
+│       │   └── values.yaml
+│       ├── kong
+│       │   ├── Chart.lock
+│       │   ├── charts
+│       │   ├── Chart.yaml
+│       │   ├── crds
+│       │   ├── README.md
+│       │   ├── templates
+│       │   └── values.yaml
+│       ├── nats
+│       │   ├── Chart.lock
+│       │   ├── charts
+│       │   ├── Chart.yaml
+│       │   ├── README.md
+│       │   ├── templates
+│       │   └── values.yaml
+│       └── redis
+│           ├── Chart.lock
+│           ├── charts
+│           ├── Chart.yaml
+│           ├── README.md
+│           ├── templates
+│           ├── values.schema.json
+│           └── values.yaml
+
+
+Đây là cấu trúc hình cây
 ## 6. Config terraform
 ## 7. Config Jenkins job
 ## 8. ArgoCD
