@@ -494,6 +494,11 @@ kubectl get secret --namespace cattle-system bootstrap-secret -o jsonpath='{.dat
 - priorityClassName
 
 ## 5. Config repository
+### 5.1. Tạo repo CICD Configs
+|_argo_cd
+|_bootstrap
+|_databases
+|_manifests
 ## 6. Config terraform
 ## 7. Config Jenkins job
 ## 8. ArgoCD
